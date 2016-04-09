@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>分享至</title>
+    <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            -webkit-user-select: none;
+        }
+
+        ul {
+            margin: 50px auto;
+            overflow: hidden;
+            width: auto;
+        }
+
+        li {
+
+            height: 30px;
+            display: table;
+            float: left;
+            color: #FFFFFF;
+            font-size: 12px;
+            text-shadow: 0 0 1px #6F9C3A;
+            margin: 1px;
+            background: #8BC34A;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        li:first-child {
+            border-bottom-left-radius: 10%;
+            border-top-left-radius: 10%;
+        }
+
+        li:last-child {
+            display: block;
+            border-bottom-right-radius: 10%;
+            border-top-right-radius: 10%;
+        }
+
+        li:hover {
+            background: #03A9F4;
+        }
+
+        a {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        td {
+            border: 1px solid #8BC34A;
+        }
+    </style>
+</head>
+
+<body>
+<ul>
+    <li>
+        <a>分享至</a>
+    </li>
+    <li>
+        <a class="shareTo" shareConfig="qq">QQ</a>
+    </li>
+    <li>
+        <a class="shareTo" shareConfig="qzone">QQ</br>空间</a>
+    </li>
+    <li>
+        <a class="shareTo" shareConfig="sina">新浪</a>
+    </li>
+    <li>
+        <a class="shareTo" shareConfig="tqq">腾讯</br>广播</a>
+    </li>
+    <li>
+        <a class="shareTo" shareConfig="renren">人人网</a>
+    </li>
+    <li>
+        <a class="shareTo" shareConfig="douban">豆瓣</a>
+    </li>
+    <li><img src="http://img5.duitang.com/uploads/item/201408/11/20140811151435_3UCY4.jpeg" width="100%" /></li>
+</ul>
+<h1>使用方法：</h1>
+<span>样式需要自己写，如果只是简单的分享需求，就你不需要写JS了</span>
+<span>new shareTo(".shareTo")</br>这样就OK了。</br>但是要注意的.shareTo 这个元素（或元素组）需要设置相应且正确的shareConfig属性哦。</br></span>
+<table>
+    <tr>
+        <td>shareConfig</td>
+        <td>对应的平台</td>
+    </tr>
+    <tr>
+        <td>qq</td>
+        <td>分享到QQ</td>
+    </tr>
+    <tr>
+        <td>qzone</td>
+        <td>分享到QQ空间</td>
+    </tr>
+    <tr>
+        <td>tqq</td>
+        <td>分享到腾讯微博</td>
+    </tr>
+    <tr>
+        <td>sina</td>
+        <td>分享到新浪微博</td>
+    </tr>
+    <tr>
+        <td>renren</td>
+        <td>分享到人人网</td>
+    </tr>
+    <tr>
+        <td>douban</td>
+        <td>分享到豆瓣网</td>
+    </tr>
+</table>
+<h2>自定义分享内容参照表</h2>
+<table>
+    <tr>
+        <td>key</td>
+        <td>说明</td>
+        <td>默认值</td>
+    </tr>
+    <tr>
+        <td>shareTitle</td>
+        <td>分享的标题</td>
+        <td>被分享页面的网页标题</td>
+    </tr>
+    <tr>
+        <td>shareUrl</td>
+        <td>分享的链接</td>
+        <td>被分享页面地址栏中的地址</td>
+    </tr>
+    <tr>
+        <td>shareCon</td>
+        <td>分享的内容/说明/理由/等等/</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>shareIamge</td>
+        <td>分享图片地址</td>
+        <td>从被分享页面抓取一张图片</td>
+    </tr>
+    <tr>
+        <td>sina.ralateUid</td>
+        <td>在新浪微博中@此id对应的微博用户。注：id为微博的数字id,可以在自己微博主页地址栏中找到</td>
+        <td></td>
+    </tr>
+</table>
+<script>
+    (function(window, document) {
+        var shareTo;
+        shareTo = function(el, options, callback) {
+            var me = this,
+                    Elements = typeof el === "string" ? document.querySelectorAll(el) : el,
+                    img = document.getElementsByTagName("img")[0];
+            me.options = {
+                shareTitle: document.title,
+                shareUrl: window.location.href,
+                shareCon: "点击查看",
+                shareIamge: img ? img.attributes.src.value : "",
+                sina: {
+                    ralateUid: ""
+                }
+            };
+            for (i in options) {
+                me.options[i] = options[i];
+            };
+            if (Elements.length === 0) callback("元素获取错误！");
+
+            for (var i = 0, l = Elements.length; i < l; i++) {
+                alert(Elements[i].attributes.shareConfig.value);
+                Elements[i].addEventListener("click", function() {
+                    var shareConfig = this.attributes.shareConfig;
+                    if (!shareConfig) {
+                        callback('末设置shareConfig');
+                    } else {
+                        share(shareConfig.value);
+                    };
+                }, false);
+                if (i === l - 1) callback("初化成功！");
+            };
+            var share = function(type) {
+                var Surl, options = me.options;
+                switch (type) {
+                    case 'qq':
+                        Surl = "http://connect.qq.com/widget/shareqq/index.html?url=" + options.shareUrl + "&title=" + options.shareTitle + "&desc=" + options.shareCon + "&pics=" + options.shareIamge;
+                        break;
+                    case 'qzone':
+                        Surl = "http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=" + options.shareUrl + "&title=" + options.shareTitle + "&desc=" + options.shareCon + "&pics=" + options.shareIamge;
+                        break;
+                    case 'sina':
+                        Surl = "http://v.t.sina.com.cn/share/share.php?url=" + options.shareUrl + "&title=" + options.shareTitle + "&searchPic=true&pic=" + options.shareIamge + "&ralateUid=" + options.sina.ralateUid;
+                        break;
+                    case 'tqq':
+                        Surl = "http://share.v.t.qq.com/index.php?c=share&a=index&title=" + options.shareTitle + "&pic=" + options.shareIamge + "&url=" + options.shareUrl;
+                        break;
+                    case "renren":
+                        Surl = "http://widget.renren.com/dialog/share?resourceUrl=" + options.shareUrl + "&title=" + options.shareTitle + "&images=" + options.shareIamge + "&description=" + options.shareCon;
+                        break;
+                    case "douban":
+                        Surl = "https://www.douban.com/share/service?href=" + options.shareUrl + "&name=" + options.shareTitle + "&image=" + options.shareIamge + "&text=" + options.shareCon;
+                        break;
+                    default:
+                        callback("shareConfig设置错误");
+                        return false;
+                };
+                window.open(Surl, "newWindow");
+            };
+        };
+        window.shareTo = shareTo;
+    })(window, document);
+    var myShare = new shareTo(".shareTo", {
+        shareTitle: "分享至测试测试",
+        shareUrl: "http://202.115.42.67:443/sqliteblog/index.php",
+        shareCon: "测试内容测试内容测试内容测试内容",
+        sina: {
+            ralateUid: "1391145301"
+        }
+    }, function(data) {
+        console.log(data)
+    });
+
+</script>
+</body>
+
+</html>
